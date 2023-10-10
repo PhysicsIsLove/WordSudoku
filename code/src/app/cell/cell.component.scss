@@ -1,0 +1,51 @@
+
+
+.cell-active{
+    // background-color: rgb(173, 173, 173);
+    border-radius: 5px;
+    width: 100px;
+    height: 100px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.cell-locked{
+    cursor: auto;
+    // background-color: rgb(187, 160, 160);
+    border-radius: 5px;
+    width: 100px;
+    height: 100px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+.cell-not-active{
+    // background-color: rgb(216, 216, 216);
+    border-radius: 5px;
+    width: 100px;
+    height: 100px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+}
+
+.cell-text{
+    font-size: 90px;
+    font-family: monospace;
+    margin: 0px;
+    cursor: pointer;
+}
+
+div[tabindex]:focus {
+    outline: none;
+}

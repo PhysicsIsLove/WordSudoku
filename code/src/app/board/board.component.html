@@ -1,0 +1,14 @@
+<div class="board" [ngStyle]="{'grid-template-columns':gridSize}">
+    <ng-container *ngFor="let row of board; index as i">
+        <ng-container *ngFor="let cell of row; index as j">
+            <div class="cell">
+                <app-cell (click)="onCellClick(i, j)" [cellInfo]="board[i][j]" (cellValueChange)="onCellValueChange($event, i, j)">
+                </app-cell>
+            </div>
+        </ng-container>
+    </ng-container>
+</div>
+
+<div class="result-container">
+    <p class="result-status"> {{ solveStatus }} </p>
+</div>

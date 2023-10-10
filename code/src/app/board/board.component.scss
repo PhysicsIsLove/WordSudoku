@@ -1,0 +1,20 @@
+.board{
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+
+    border-radius: 5px;
+    width: fit-content;
+
+    .cell{
+        margin: 4px;
+        // height: 100px;
+    }
+}
+
+.result-container{
+    .result-status {
+        font-family: 'Courier New', Courier, monospace;
+        font-size: xx-large;
+        color: black;
+    }
+}
