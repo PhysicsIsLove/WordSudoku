@@ -1,4 +1,4 @@
-export const BOARD_SIZE = 3;
+export const BOARD_SIZE = 7;
 
 export const WORD_LIST = ['TEA', 'DOG', 'CAT', 'EAT', 'DOG', 'HAT', 'INK', 'JAZZ', 'KITE', 'LAMP', 'MOON', 'NEST', 'ORCA', 'PEAR', 'ROSE', 'STAR', 'TREE', 'UMBRA', 'VASE', 'WOLF', 'YACHT', 'ZEBRA', 'OCEAN', 'LEMON', 'BOOK', 'LOVE', 'RAIN', 'SONG', 'BLUE', 'BIRD', 'LION', 'GOLD', 'FIRE', 'WINE', 'SHIP', 'BELL', 'DARK', 'GIRL', 'HOME', 'KING', 'LAKE', 'NOON', 'TIME', 'CODE', 'DUCK', 'FROG', 'BEAR', 'BABY', 'DEER', 'LIME', 'PINK', 'IRIS', 'SALT', 'SAND', 'FERN', 'MILK'];
 
@@ -28,9 +28,11 @@ export const GRADIENT: any = {
     bottomToTop_4: `linear-gradient(0deg, rgba(255,206,189,1) 0%, rgba(255,225,217,1) 100%)`,
 }
 
+export const INITIALIZING_WORD = "ATESOIU";
+
 export const CELL_COLOR: any = {
-    BLOCKED_CELL: "gray",
-    ACTIVE_CELL: "green",
-    INACTIVE_CELL: "red",
-    DUPLICATE_CHAR_CELL: "blue",
+    BLOCKED_CELL: "#618264",
+    ACTIVE_CELL: "#B0D9B1",
+    INACTIVE_CELL: "#D0E7D2",
+    DUPLICATE_CHAR_CELL: "#FFCF9D",
 }

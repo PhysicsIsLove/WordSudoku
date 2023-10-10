@@ -7,14 +7,17 @@
 
     .cell{
         margin: 4px;
-        // height: 100px;
     }
 }
 
 .result-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
     .result-status {
         font-family: 'Courier New', Courier, monospace;
         font-size: xx-large;
         color: black;
+        font-weight: 800;
     }
 }

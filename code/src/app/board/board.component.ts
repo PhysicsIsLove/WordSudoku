@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BOARD_SIZE, CELL_COLOR, GRADIENT, WORD_LIST } from '../constants';
+import { BOARD_SIZE, CELL_COLOR, GRADIENT, INITIALIZING_WORD, WORD_LIST } from '../constants';
 import { Cell, WordValidation } from '../model';
 
 @Component({
@@ -51,7 +51,7 @@ export class BoardComponent implements OnInit {
           this.board[i].push({letter:"", isActive: false, isLocked: false, background:CELL_COLOR.INACTIVE_CELL});
       }
     }
-    this.fillTheBoardWithAWord("AEOIU");
+    this.fillTheBoardWithAWord(INITIALIZING_WORD);
   }
 
   onCellValueChange(input: string, row: number, col: number){
