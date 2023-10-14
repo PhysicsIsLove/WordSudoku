@@ -1,6 +1,6 @@
-export const BOARD_SIZE = 7;
+export const BOARD_SIZE = 4;
 
-export const WORD_LIST = ['TEA', 'DOG', 'CAT', 'EAT', 'DOG', 'HAT', 'INK', 'JAZZ', 'KITE', 'LAMP', 'MOON', 'NEST', 'ORCA', 'PEAR', 'ROSE', 'STAR', 'TREE', 'UMBRA', 'VASE', 'WOLF', 'YACHT', 'ZEBRA', 'OCEAN', 'LEMON', 'BOOK', 'LOVE', 'RAIN', 'SONG', 'BLUE', 'BIRD', 'LION', 'GOLD', 'FIRE', 'WINE', 'SHIP', 'BELL', 'DARK', 'GIRL', 'HOME', 'KING', 'LAKE', 'NOON', 'TIME', 'CODE', 'DUCK', 'FROG', 'BEAR', 'BABY', 'DEER', 'LIME', 'PINK', 'IRIS', 'SALT', 'SAND', 'FERN', 'MILK'];
+export const WORDS_FILE_PATH = 'assets/popular_words.txt';
 
 export const GRADIENT: any = {
     leftToRight_0: `linear-gradient(90deg, rgba(255,137,90,1) 0%, rgba(255,148,106,1) 100%)`,
@@ -28,11 +28,11 @@ export const GRADIENT: any = {
     bottomToTop_4: `linear-gradient(0deg, rgba(255,206,189,1) 0%, rgba(255,225,217,1) 100%)`,
 }
 
-export const INITIALIZING_WORD = "ATESOIU";
+export const INITIALIZING_WORD = "AETIONS";
 
 export const CELL_COLOR: any = {
     BLOCKED_CELL: "#618264",
     ACTIVE_CELL: "#B0D9B1",
     INACTIVE_CELL: "#D0E7D2",
-    DUPLICATE_CHAR_CELL: "#FFCF9D",
+    DUPLICATE_CHAR_CELL: "rgba(251, 81, 111, 0.82)",
 }

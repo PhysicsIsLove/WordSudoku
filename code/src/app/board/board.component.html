@@ -10,5 +10,16 @@
 </div>
 
 <div class="result-container">
-    <p class="result-status"> {{ solveStatus }} </p>
+    <p class="failure-reason">{{ failureReason }}</p>
+       
+</div>
+
+<div class="result-container">
+    <p class="result-status"> {{ solveStatus }} </p> 
+</div>
+
+<div>
+    <button class="restart-btn" (click)="onClickRestart()" >
+        Restart
+    </button>
 </div>

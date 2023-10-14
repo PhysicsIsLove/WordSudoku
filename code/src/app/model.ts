@@ -11,3 +11,18 @@ export interface WordValidation {
     duplicateCharacter: string,
     doesReverseExist: boolean
 }
+
+export interface WordMeaning{
+    word: string,
+    meanings: Meaning[];
+}
+
+export interface Meaning {
+    partOfSpeech: string;
+    definitions: Definition[];
+}
+
+export interface Definition{
+    definition: string;
+    example: string;
+}

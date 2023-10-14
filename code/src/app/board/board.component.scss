@@ -14,10 +14,19 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    .result-status {
+    .result-status, .failure-reason {
         font-family: 'Courier New', Courier, monospace;
         font-size: xx-large;
         color: black;
         font-weight: 800;
     }
+}
+
+.restart-btn{
+    background-color: darkgreen;
+    color: white;
+    font-family: monospace;
+    width: 8rem;
+    height: 3rem;
+    font-size: 1.5rem;
 }

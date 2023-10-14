@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { BOARD_SIZE, CELL_COLOR, GRADIENT, INITIALIZING_WORD, WORD_LIST } from '../constants';
+import { BOARD_SIZE, CELL_COLOR, GRADIENT, INITIALIZING_WORD, WORDS_FILE_PATH } from '../constants';
 import { Cell, WordValidation } from '../model';
+import { FileServiceService } from '../services/file-service.service';
+import { DictionaryService } from '../services/dictionary.service';
 
 @Component({
   selector: 'app-board',
@@ -9,18 +11,32 @@ import { Cell, WordValidation } from '../model';
 })
 export class BoardComponent implements OnInit {
 
-  board: Cell[][];
+  board: Cell[][] = [];
+
+  foundWord: string = "";
+  foundMeaning: string = "";
+
+  failureReason: string = "";
 
   gridSize: string = `repeat(${BOARD_SIZE}, 1fr)`;
 
   solveStatus : string = "";
 
-  constructor() {
-    this.board = [];
+  ALL_WORDS: any;
+
+  constructor(private fileService: FileServiceService, private dictionaryService: DictionaryService) {
     this.initializeTheBoard();
    }
 
   ngOnInit(): void {
+    this.loadWordsFile();
+  }
+
+  loadWordsFile() {
+    const filePath = WORDS_FILE_PATH;
+    this.fileService.getFileContent(filePath).subscribe(res => {
+      this.ALL_WORDS = res.split("\r\n").sort();
+    });
   }
 
   onCellClick(row: number, col: number){
@@ -31,20 +47,15 @@ export class BoardComponent implements OnInit {
             this.board[i][j].isActive = !this.board[i][j].isActive;
           } else{
             this.board[i][j].isActive = false;          
-          }
-          if(this.board[i][j].isActive){
-            this.board[i][j].background = CELL_COLOR.ACTIVE_CELL;
-          } else{
-            this.board[i][j].background = CELL_COLOR.INACTIVE_CELL;
-          }
-        } else{
-          this.board[i][j].background = CELL_COLOR.BLOCKED_CELL;
-        }       
+          }          
+        }      
       }
     }
+    this.setDefaultColors();
   }
 
   initializeTheBoard(){
+    this.board = [];
     for(let i = 0; i < BOARD_SIZE; i++) {
       this.board.push([]);
       for(let j = 0; j< BOARD_SIZE; j++) {
@@ -56,14 +67,16 @@ export class BoardComponent implements OnInit {
 
   onCellValueChange(input: string, row: number, col: number){
     this.solveStatus = "";
-      this.board[row][col].letter = input;
-      if(this.checkIfTheBoardIsFullyFilled(this.board)){
-        if(this.checkIfTheBoardIsSolved(this.board)){
-          this.solveStatus = "SUCCESS";
-        } else{
-          this.solveStatus = "TRY AGAIN";
-        }
+    this.failureReason = "";
+    this.setDefaultColors();
+    this.board[row][col].letter = input;
+    if(this.checkIfTheBoardIsFullyFilled(this.board)){
+      if(this.checkIfTheBoardIsSolved(this.board)){
+        this.solveStatus = "SUCCESS";
+      } else{
+        this.solveStatus = "TRY AGAIN";
       }
+    }
   }
 
   checkIfTheBoardIsSolved(board: Cell[][]): boolean {
@@ -73,15 +86,18 @@ export class BoardComponent implements OnInit {
           let word: string = this.constructWordFromIndices(this.board, row, i, row, j);
           let validationStatus = this.validateWord(word)
           if(validationStatus.hasDuplicates){
+            this.failureReason = validationStatus.duplicateCharacter + " is repeated";
             this.colorDuplicateCharacters(board, validationStatus.duplicateCharacter, row, true);
             return false;
           } else if (validationStatus.wordAlreadyExists){
               if(validationStatus.doesReverseExist){
-                this.colorExistingWord(this.board, row, j, row, j);
+                this.failureReason = word.toLowerCase() + " exists";
+                this.colorExistingWord(this.board, row, j, row, i);
               } else{
+                this.failureReason = word + " exists";
                 this.colorExistingWord(this.board, row, i, row, j);
               }            
-              return false;
+            return false;
           }
         }
       }
@@ -93,12 +109,15 @@ export class BoardComponent implements OnInit {
           let word: string = this.constructWordFromIndices(this.board, i, col, j, col);
           let validationStatus = this.validateWord(word)
           if(validationStatus.hasDuplicates){
+            this.failureReason = validationStatus.duplicateCharacter + " is repeated";
             this.colorDuplicateCharacters(board, validationStatus.duplicateCharacter, col, false);
             return false;
           } else if (validationStatus.wordAlreadyExists){
             if(validationStatus.doesReverseExist){
+              this.failureReason = word.toLowerCase() + " exists";
               this.colorExistingWord(this.board, j, col, i, col);
             } else{
+              this.failureReason = word + " exists";
               this.colorExistingWord(this.board, i, col, j, col);
             }          
             return false;
@@ -106,6 +125,7 @@ export class BoardComponent implements OnInit {
         }
       }
     }    
+    this.failureReason = "";
     return true;
   }
 
@@ -133,8 +153,8 @@ export class BoardComponent implements OnInit {
           board[startRow][i].background = GRADIENT[colorKey];
         }
       } else{
-        for(let i = endCol-1; i >= startCol; i--){
-          let colorKey = `rightToLeft_${endCol - i - 1}`;
+        for(let i = startCol-1; i >= endCol; i--){
+          let colorKey = `rightToLeft_${startCol - i - 1}`;
           board[startRow][i].background = GRADIENT[colorKey];
         }
       }      
@@ -145,8 +165,8 @@ export class BoardComponent implements OnInit {
           board[i][startCol].background = GRADIENT[colorKey];
         }
       } else{
-        for(let i = endRow-1; i >= startRow; i--){
-          let colorKey = `bottomToTop_${endRow - i - 1}`;
+        for(let i = startRow-1; i >= endRow; i--){
+          let colorKey = `bottomToTop_${startRow - i - 1}`;
           board[i][startCol].background = GRADIENT[colorKey];
         }
       }
@@ -154,7 +174,6 @@ export class BoardComponent implements OnInit {
   }
 
   constructWordFromIndices(board: Cell[][], startRow: number, startCol: number, endRow: number, endCol: number): string{
-    // console.log("(", startRow, startCol, ")", "->", "(", endRow, endCol, ")")
     let word: string = "";
     if(startRow == endRow){
       for(let i = startCol; i < endCol; i++){
@@ -183,11 +202,11 @@ export class BoardComponent implements OnInit {
   }
 
   wordAlreadyExists(word: string){
-    for(let w of WORD_LIST){
+    word = word.toLowerCase();
+    for(let w of this.ALL_WORDS){
       if(word === w) return true;
     }return false;
   }
-
 
   validateWord(word: string): WordValidation{
     let duplicateCharacter = this.hasDuplicateCharacters(word);
@@ -246,6 +265,31 @@ export class BoardComponent implements OnInit {
     return word.split('').reverse().join('');
   }
 
-  // use the dictionary API to show the meanings of the word to the user  
+  setDefaultColors(){
+    for(let i=0; i< BOARD_SIZE; i++){
+      for(let j=0; j< BOARD_SIZE; j++){
+        if(!this.board[i][j].isLocked){
+          if(this.board[i][j].isActive){
+            this.board[i][j].background = CELL_COLOR.ACTIVE_CELL;
+          } else{
+            this.board[i][j].background = CELL_COLOR.INACTIVE_CELL;
+          }
+        } else{
+          this.board[i][j].background = CELL_COLOR.BLOCKED_CELL;
+        }       
+      }
+    }
+  }
+
+  onClickRestart(){
+    this.initializeTheBoard();
+  }
+
+  getWordMeaning(word: string){
+    this.dictionaryService.getWordMeanings(word).subscribe(res => {
+      console.log("The meaning of the word is ", word);
+    })
+  }
+
 
 }

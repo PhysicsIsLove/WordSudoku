@@ -5,16 +5,20 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BoardComponent } from './board/board.component';
 import { CellComponent } from './cell/cell.component';
+import { HttpClientModule } from '@angular/common/http';
+import { WordMeaningComponent } from './word-meaning/word-meaning.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     BoardComponent,
-    CellComponent
+    CellComponent,
+    WordMeaningComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
