@@ -1,3 +1,10 @@
+# How to play
+The game is a 5x5 board with some letters pre-filled. The objective is to fill all the cells of the board such that no two letters in a row or a column should repeat. Additionally no combination of letters should form a valid word. The combination of letters can be from left-to-right, right-to-left, top-to-bottom or bottom-to-top.
+
+When you have filled the board but it has some combination of letters forming a valid word, you can choose to look up its meaning using the `See meaning` button. The meaning is fetched from the website: https://dictionaryapi.dev/
+
+##### This project is currently under active development. Feel free to add suggesstions on what features can be added to make the game more interesting. Do raise a issue if you find any bug.
+
 # Code
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.2.1.
