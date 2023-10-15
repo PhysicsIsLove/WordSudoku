@@ -14,7 +14,7 @@ export interface WordValidation {
 
 export interface WordMeaning{
     word: string,
-    meanings: Meaning[];
+    meanings?: Meaning[];
 }
 
 export interface Meaning {

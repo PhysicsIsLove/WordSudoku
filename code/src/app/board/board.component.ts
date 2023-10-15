@@ -33,6 +33,7 @@ export class BoardComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadWordsFile();
+    this.getWordMeaning("pam");
   }
 
   loadWordsFile() {
@@ -305,6 +306,9 @@ export class BoardComponent implements OnInit {
   getWordMeaning(word: string){
     this.dictionaryService.getWordMeanings(word).subscribe(res => {
       this.wordMeaning = res;
+    }, 
+    error => {
+      console.error("Error: ", error.message);
     })
   }
 

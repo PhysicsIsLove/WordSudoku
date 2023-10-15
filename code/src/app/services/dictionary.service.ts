@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Definition, Meaning, WordMeaning } from '../model';
-import { map } from 'rxjs';
+import { Observable, catchError, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +29,12 @@ export class DictionaryService {
             }            
           }),
         };
-      })
+      }),
+      catchError(this.handleError)
     );
+  }
+
+  handleError(error: any): Observable<any>{
+    throw new Error(error.error.title);
   }
 }
