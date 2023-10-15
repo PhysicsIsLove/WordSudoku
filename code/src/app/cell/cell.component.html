@@ -1,6 +1,6 @@
-<div [ngClass]="{ 'cell-active': cellInfo.isActive, 'cell-not-active': !cellInfo.isActive, 'cell-locked': cellInfo.isLocked}" tabindex="0" 
-    (keypress)="onKeyPress($event)" 
-    (keyup)="onKeyPress($event)"
-    [ngStyle]="{'background': cellInfo.background }"> <p class="cell-text">{{ cellInfo.letter}}</p>
-</div>
+<input type="text" maxlength="1" [value]="cellInfo.letter"
+(keypress)="onKeyPress($event)" (keyup)="onKeyPress($event)"
+[ngClass]="{ 'cell-active': cellInfo.isActive, 'cell-not-active': !cellInfo.isActive, 'cell-locked': cellInfo.isLocked}"
+[ngStyle]="{'background': cellInfo.background }"
+>
 

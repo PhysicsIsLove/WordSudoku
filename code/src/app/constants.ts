@@ -1,4 +1,4 @@
-export const BOARD_SIZE = 8;
+export const BOARD_SIZE = 5;
 
 export const WORDS_FILE_PATH = 'assets/popular_words.txt';
 
@@ -35,4 +35,9 @@ export const CELL_COLOR: any = {
     ACTIVE_CELL: "#B0D9B1",
     INACTIVE_CELL: "#D0E7D2",
     DUPLICATE_CHAR_CELL: "rgba(251, 81, 111, 0.82)",
+}
+
+export const FAILURE_INFO = {
+    DUPLICATE: "duplicate",
+    WORD_EXISTS: "wordExists"
 }

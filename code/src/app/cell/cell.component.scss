@@ -1,5 +1,6 @@
 :root {
     --cell-size: 100px;
+    cursor: none;
 }
 
 .cell-active{
@@ -24,12 +25,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    p{
-        color: white;
-    }
+    color: white;
 }
-
-
 
 .cell-not-active{
     border-radius: 5px;
@@ -50,6 +47,15 @@
     cursor: pointer;
 }
 
-div[tabindex]:focus {
-    outline: none;
+input {
+    width: 100px;
+    height: 100px;
+    border: 0px;
+    background-color: aquamarine;
+    font-size: 90px;
+    font-family: monospace;
+    color: black;
+    cursor: pointer;
+    text-align: center;
+    caret-color: transparent;
 }

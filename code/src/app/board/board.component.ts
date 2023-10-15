@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BOARD_SIZE, CELL_COLOR, GRADIENT, INITIALIZING_WORD, WORDS_FILE_PATH } from '../constants';
+import { BOARD_SIZE, CELL_COLOR, FAILURE_INFO, GRADIENT, INITIALIZING_WORD, WORDS_FILE_PATH } from '../constants';
 import { Cell, WordMeaning, WordValidation } from '../model';
 import { FileServiceService } from '../services/file-service.service';
 import { DictionaryService } from '../services/dictionary.service';
@@ -16,6 +16,7 @@ export class BoardComponent implements OnInit {
   foundWord: string = "";
   foundMeaning: string = "";
 
+  failureDetail: string = "";
   failureReason: string = "";
 
   gridSize: string = `repeat(${BOARD_SIZE}, 1fr)`;
@@ -24,7 +25,7 @@ export class BoardComponent implements OnInit {
 
   ALL_WORDS: any;
 
-  wordMeaning!: WordMeaning;
+  wordMeaning!: WordMeaning | null;
 
   constructor(private fileService: FileServiceService, private dictionaryService: DictionaryService) {
     this.initializeTheBoard();
@@ -42,6 +43,7 @@ export class BoardComponent implements OnInit {
   }
 
   onCellClick(row: number, col: number){
+    console.log("clicke inside the board component");
     for(let i=0; i< BOARD_SIZE; i++){
       for(let j=0; j< BOARD_SIZE; j++){
         if(!this.board[i][j].isLocked){
@@ -57,6 +59,8 @@ export class BoardComponent implements OnInit {
 
   initializeTheBoard(){
     this.board = [];
+    this.failureDetail = "";
+    this.failureReason = "";
     for(let i = 0; i < BOARD_SIZE; i++) {
       this.board.push([]);
       for(let j = 0; j< BOARD_SIZE; j++) {
@@ -87,16 +91,19 @@ export class BoardComponent implements OnInit {
           let word: string = this.constructWordFromIndices(this.board, row, i, row, j);
           let validationStatus = this.validateWord(word)
           if(validationStatus.hasDuplicates){
-            this.failureReason = validationStatus.duplicateCharacter + " is repeated";
+            this.failureDetail = validationStatus.duplicateCharacter + " is repeated";
+            this.failureReason = FAILURE_INFO.DUPLICATE;
             this.colorDuplicateCharacters(board, validationStatus.duplicateCharacter, row, true);
             return false;
           } else if (validationStatus.wordAlreadyExists){
               if(validationStatus.doesReverseExist){
-                this.failureReason = this.reverseWord(word.toUpperCase()) + " exists";
+                this.failureDetail = this.reverseWord(word.toUpperCase()) + " exists";
+                this.failureReason = FAILURE_INFO.WORD_EXISTS;
                 this.foundWord = this.reverseWord(word.toUpperCase());
                 this.colorExistingWord(this.board, row, j, row, i);
               } else{
-                this.failureReason = word + " exists";
+                this.failureDetail = word + " exists";
+                this.failureReason = FAILURE_INFO.WORD_EXISTS;
                 this.foundWord = word;
                 this.colorExistingWord(this.board, row, i, row, j);
               }            
@@ -112,16 +119,19 @@ export class BoardComponent implements OnInit {
           let word: string = this.constructWordFromIndices(this.board, i, col, j, col);
           let validationStatus = this.validateWord(word)
           if(validationStatus.hasDuplicates){
-            this.failureReason = validationStatus.duplicateCharacter + " is repeated";
+            this.failureDetail = validationStatus.duplicateCharacter + " is repeated";
+            this.failureReason = FAILURE_INFO.DUPLICATE;
             this.colorDuplicateCharacters(board, validationStatus.duplicateCharacter, col, false);
             return false;
           } else if (validationStatus.wordAlreadyExists){
             if(validationStatus.doesReverseExist){
-              this.failureReason = this.reverseWord(word.toUpperCase()) + " exists";
+              this.failureDetail = this.reverseWord(word.toUpperCase()) + " exists";
+              this.failureReason = FAILURE_INFO.WORD_EXISTS;
               this.foundWord = this.reverseWord(word.toUpperCase());
               this.colorExistingWord(this.board, j, col, i, col);
             } else{
-              this.failureReason = word + " exists";
+              this.failureDetail = word + " exists";
+              this.failureReason = FAILURE_INFO.WORD_EXISTS;
               this.foundWord = word;
               this.colorExistingWord(this.board, i, col, j, col);
             }          
@@ -300,6 +310,10 @@ export class BoardComponent implements OnInit {
 
   onClickSeeMeaning(){
     this.getWordMeaning(this.foundWord);
+  }
+
+  onCloseModal(){
+    this.wordMeaning = null;
   }
 
 

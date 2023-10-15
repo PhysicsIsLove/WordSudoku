@@ -14,7 +14,6 @@ export class CellComponent implements OnInit {
   @Output() cellValueChange = new EventEmitter<string>();
 
   constructor() { 
-    // remove the input box from ThisReceiver, keep only dispatchEvent, if the user enters any alphabet then change the content of that div
   }
 
   ngOnInit(): void {

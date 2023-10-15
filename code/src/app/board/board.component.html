@@ -2,19 +2,18 @@
     <ng-container *ngFor="let row of board; index as i">
         <ng-container *ngFor="let cell of row; index as j">
             <div class="cell">
-                <app-cell (click)="onCellClick(i, j)" [cellInfo]="board[i][j]" (cellValueChange)="onCellValueChange($event, i, j)">
+                <app-cell (click)="onCellClick( i, j)" [cellInfo]="board[i][j]" (cellValueChange)="onCellValueChange($event, i, j)">
                 </app-cell>
             </div>
         </ng-container>
     </ng-container>
 </div>
 
-<div class="result-container">
-    <p class="failure-reason">{{ failureReason }}</p>       
-</div>
-
-<div>
-    <button (click)="onClickSeeMeaning()">See meaning</button>
+<div  class="failure-info">
+    <ng-container *ngIf="failureReason !== ''">
+    <p class="failure-detail">{{ failureDetail }}</p>
+    <button class="meaning-btn" *ngIf="failureReason === 'wordExists'" (click)="onClickSeeMeaning()">See meaning</button>
+    </ng-container>
 </div>
 
 <div class="result-container">
@@ -27,6 +26,4 @@
     </button>
 </div>
 
-<app-word-meaning [wordMeaning]="wordMeaning">
-
-</app-word-meaning>
+<app-word-meaning [wordMeaning]="wordMeaning" (closeModal)="onCloseModal()"> </app-word-meaning>

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { WordMeaning } from '../model';
 
 @Component({
@@ -8,11 +8,16 @@ import { WordMeaning } from '../model';
 })
 export class WordMeaningComponent implements OnInit {
 
-  @Input("wordMeaning") wordMeaning!: WordMeaning;
+  @Input("wordMeaning") wordMeaning!: WordMeaning | null;
+  @Output("closeModal") closeModal = new EventEmitter<void>();
 
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  onClickCloseModal(){
+    this.closeModal.emit();
   }
 
 }
