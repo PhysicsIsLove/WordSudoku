@@ -1,16 +1,21 @@
-<div>
-    <p>hello </p>
-    <p>[Exclamation]</p>
-    <p>used as a greeting or to begin a phone conversation.</p>
-    <p>hello there, Katie!</p>
+<div class="dictionary-container">
+    <ng-container *ngIf="wordMeaning">
 
-    <p>hello </p>
-    <p>[noun]</p>
-    <p>an utterance of ‘hello’; a greeting.</p>
-    <p>she was getting polite nods and hellos from people</p>
+        <h2>{{ wordMeaning.word }} </h2>
 
-    <p>hello </p>
-    <p>[verb]</p>
-    <p>say or shout ‘hello’.</p>
-    <p>I pressed the phone button and helloed</p>
+        <div *ngFor="let meaning of wordMeaning.meanings">
+
+            <i> [{{ meaning.partOfSpeech }}] </i>
+
+            <div *ngFor="let definition of meaning.definitions">
+
+                <p>Def: {{ definition.definition }}</p>
+                <p *ngIf="definition?.example">Example: {{ definition.example }}</p>
+
+            </div>
+        </div>
+
+</ng-container>
+
+
 </div>

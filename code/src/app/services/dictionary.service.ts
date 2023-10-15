@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Definition, Meaning, WordMeaning } from '../model';
+import { map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +13,23 @@ export class DictionaryService {
   constructor(private http: HttpClient) {   }
 
   getWordMeanings(word: string){
-    return this.http.get(this.DICTIONARY_URL + word);
+    return this.http.get<WordMeaning>(this.DICTIONARY_URL + word).pipe(
+      map((response: any) => {  
+        console.log("response: ", response);      
+        return {
+          word: response[0].word,
+          meanings: response[0].meanings.map((item: any) => {
+            return {
+              partOfSpeech: item.partOfSpeech,
+              definitions: item.definitions.map((def: any) => { return {
+                definition: def.definition,
+                example: def.example
+              }                
+              })
+            }            
+          }),
+        };
+      })
+    );
   }
 }

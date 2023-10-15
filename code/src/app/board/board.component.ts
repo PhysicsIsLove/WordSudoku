@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BOARD_SIZE, CELL_COLOR, GRADIENT, INITIALIZING_WORD, WORDS_FILE_PATH } from '../constants';
-import { Cell, WordValidation } from '../model';
+import { Cell, WordMeaning, WordValidation } from '../model';
 import { FileServiceService } from '../services/file-service.service';
 import { DictionaryService } from '../services/dictionary.service';
 
@@ -23,6 +23,8 @@ export class BoardComponent implements OnInit {
   solveStatus : string = "";
 
   ALL_WORDS: any;
+
+  wordMeaning!: WordMeaning;
 
   constructor(private fileService: FileServiceService, private dictionaryService: DictionaryService) {
     this.initializeTheBoard();
@@ -51,7 +53,6 @@ export class BoardComponent implements OnInit {
         }      
       }
     }
-    this.setDefaultColors();
   }
 
   initializeTheBoard(){
@@ -91,10 +92,12 @@ export class BoardComponent implements OnInit {
             return false;
           } else if (validationStatus.wordAlreadyExists){
               if(validationStatus.doesReverseExist){
-                this.failureReason = word.toLowerCase() + " exists";
+                this.failureReason = this.reverseWord(word.toUpperCase()) + " exists";
+                this.foundWord = this.reverseWord(word.toUpperCase());
                 this.colorExistingWord(this.board, row, j, row, i);
               } else{
                 this.failureReason = word + " exists";
+                this.foundWord = word;
                 this.colorExistingWord(this.board, row, i, row, j);
               }            
             return false;
@@ -114,10 +117,12 @@ export class BoardComponent implements OnInit {
             return false;
           } else if (validationStatus.wordAlreadyExists){
             if(validationStatus.doesReverseExist){
-              this.failureReason = word.toLowerCase() + " exists";
+              this.failureReason = this.reverseWord(word.toUpperCase()) + " exists";
+              this.foundWord = this.reverseWord(word.toUpperCase());
               this.colorExistingWord(this.board, j, col, i, col);
             } else{
               this.failureReason = word + " exists";
+              this.foundWord = word;
               this.colorExistingWord(this.board, i, col, j, col);
             }          
             return false;
@@ -126,6 +131,7 @@ export class BoardComponent implements OnInit {
       }
     }    
     this.failureReason = "";
+    this.foundWord = "";
     return true;
   }
 
@@ -194,6 +200,7 @@ export class BoardComponent implements OnInit {
       for(let cell of row){
         if(cell.letter === ""){
           this.solveStatus = "";
+          this.foundWord = "";
           return false;
         }
       }
@@ -287,8 +294,12 @@ export class BoardComponent implements OnInit {
 
   getWordMeaning(word: string){
     this.dictionaryService.getWordMeanings(word).subscribe(res => {
-      console.log("The meaning of the word is ", word);
+      this.wordMeaning = res;
     })
+  }
+
+  onClickSeeMeaning(){
+    this.getWordMeaning(this.foundWord);
   }
 
 

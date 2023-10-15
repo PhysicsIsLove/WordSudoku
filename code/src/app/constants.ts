@@ -1,4 +1,4 @@
-export const BOARD_SIZE = 4;
+export const BOARD_SIZE = 8;
 
 export const WORDS_FILE_PATH = 'assets/popular_words.txt';
 

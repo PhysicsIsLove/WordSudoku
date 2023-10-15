@@ -10,8 +10,11 @@
 </div>
 
 <div class="result-container">
-    <p class="failure-reason">{{ failureReason }}</p>
-       
+    <p class="failure-reason">{{ failureReason }}</p>       
+</div>
+
+<div>
+    <button (click)="onClickSeeMeaning()">See meaning</button>
 </div>
 
 <div class="result-container">
@@ -23,3 +26,7 @@
         Restart
     </button>
 </div>
+
+<app-word-meaning [wordMeaning]="wordMeaning">
+
+</app-word-meaning>

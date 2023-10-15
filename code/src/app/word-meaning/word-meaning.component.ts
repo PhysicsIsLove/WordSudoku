@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { WordMeaning } from '../model';
 
 @Component({
   selector: 'app-word-meaning',
@@ -6,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./word-meaning.component.scss']
 })
 export class WordMeaningComponent implements OnInit {
+
+  @Input("wordMeaning") wordMeaning!: WordMeaning;
 
   constructor() { }
 
