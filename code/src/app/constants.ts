@@ -28,7 +28,7 @@ export const GRADIENT: any = {
     bottomToTop_4: `linear-gradient(0deg, rgba(255,206,189,1) 0%, rgba(255,225,217,1) 100%)`,
 }
 
-export const INITIALIZING_WORD = "AETIONS";
+export const INITIALIZING_WORD = "AETIONSU";
 
 export const CELL_COLOR: any = {
     BLOCKED_CELL: "#618264",

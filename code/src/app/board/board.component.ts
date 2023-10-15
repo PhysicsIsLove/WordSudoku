@@ -67,7 +67,7 @@ export class BoardComponent implements OnInit {
           this.board[i].push({letter:"", isActive: false, isLocked: false, background:CELL_COLOR.INACTIVE_CELL});
       }
     }
-    this.fillTheBoardWithAWord(INITIALIZING_WORD);
+    this.fillTheBoardWithAWord(this.shuffleString(INITIALIZING_WORD));
   }
 
   onCellValueChange(input: string, row: number, col: number){
@@ -314,6 +314,15 @@ export class BoardComponent implements OnInit {
 
   onCloseModal(){
     this.wordMeaning = null;
+  }
+
+  shuffleString(inputString: string) : string {
+    const stringArray = inputString.split(''); // Convert the string to an array of characters
+    for (let i = stringArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1)); // Generate a random index
+      [stringArray[i], stringArray[j]] = [stringArray[j], stringArray[i]]; // Swap characters
+    }
+    return stringArray.join(''); // Convert the array back to a string
   }
 
 
