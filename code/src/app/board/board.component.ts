@@ -21,7 +21,7 @@ export class BoardComponent implements OnInit {
 
   gridSize: string = `repeat(${BOARD_SIZE}, 1fr)`;
 
-  solveStatus : string = "";
+  solveStatus: string = "";
 
   ALL_WORDS: any;
 
@@ -29,11 +29,10 @@ export class BoardComponent implements OnInit {
 
   constructor(private fileService: FileServiceService, private dictionaryService: DictionaryService) {
     this.initializeTheBoard();
-   }
+  }
 
   ngOnInit(): void {
     this.loadWordsFile();
-    this.getWordMeaning("pam");
   }
 
   loadWordsFile() {
@@ -43,146 +42,175 @@ export class BoardComponent implements OnInit {
     });
   }
 
-  onCellClick(row: number, col: number){
-    console.log("clicke inside the board component");
-    for(let i=0; i< BOARD_SIZE; i++){
-      for(let j=0; j< BOARD_SIZE; j++){
-        if(!this.board[i][j].isLocked){
-          if(row == i && col == j){
+  onCellClick(row: number, col: number) {
+    for (let i = 0; i < BOARD_SIZE; i++) {
+      for (let j = 0; j < BOARD_SIZE; j++) {
+        if (!this.board[i][j].isLocked) {
+          if (row == i && col == j) {
             this.board[i][j].isActive = !this.board[i][j].isActive;
-          } else{
-            this.board[i][j].isActive = false;          
-          }          
-        }      
+
+          } else {
+            this.board[i][j].isActive = false;
+          }
+          if (this.board[i][j].isActive) {
+            this.board[i][j].background = CELL_COLOR.ACTIVE_CELL;
+          } else {
+            this.board[i][j].background = CELL_COLOR.INACTIVE_CELL;
+          }
+        }
       }
+    }
+    if (this.checkIfTheBoardIsFullyFilled(this.board)) {
+      this.checkIfTheBoardIsSolved(this.board);
     }
   }
 
-  initializeTheBoard(){
+  initializeTheBoard() {
     this.board = [];
     this.failureDetail = "";
     this.failureReason = "";
-    for(let i = 0; i < BOARD_SIZE; i++) {
+    for (let i = 0; i < BOARD_SIZE; i++) {
       this.board.push([]);
-      for(let j = 0; j< BOARD_SIZE; j++) {
-          this.board[i].push({letter:"", isActive: false, isLocked: false, background:CELL_COLOR.INACTIVE_CELL});
+      for (let j = 0; j < BOARD_SIZE; j++) {
+        this.board[i].push({ row: i, col: j, letter: "", isActive: false, isLocked: false, background: CELL_COLOR.INACTIVE_CELL });
       }
     }
     this.fillTheBoardWithAWord(this.shuffleString(INITIALIZING_WORD));
   }
 
-  onCellValueChange(input: string, row: number, col: number){
+  onCellValueChange(input: string, row: number, col: number) {
     this.solveStatus = "";
     this.failureReason = "";
     this.setDefaultColors();
     this.board[row][col].letter = input;
-    if(this.checkIfTheBoardIsFullyFilled(this.board)){
-      if(this.checkIfTheBoardIsSolved(this.board)){
+    if (this.checkIfTheBoardIsFullyFilled(this.board)) {
+      if (this.checkIfTheBoardIsSolved(this.board)) {
         this.solveStatus = "SUCCESS";
-      } else{
+      } else {
         this.solveStatus = "TRY AGAIN";
       }
     }
   }
 
   checkIfTheBoardIsSolved(board: Cell[][]): boolean {
-    for(let row=0; row<BOARD_SIZE; row++){
-      for(let i=0; i<=BOARD_SIZE-3; i++){
-        for(let j=i+3; j<=BOARD_SIZE; j++){
+    // checking if the rows contain any duplicates
+    for (let row = 0; row < BOARD_SIZE; row++) {
+      for (let i = 0; i <= BOARD_SIZE - 3; i++) {
+        for (let j = i + 3; j <= BOARD_SIZE; j++) {
           let word: string = this.constructWordFromIndices(this.board, row, i, row, j);
           let validationStatus = this.validateWord(word)
-          if(validationStatus.hasDuplicates){
+          if (validationStatus.hasDuplicates) {
             this.failureDetail = validationStatus.duplicateCharacter + " is repeated";
             this.failureReason = FAILURE_INFO.DUPLICATE;
             this.colorDuplicateCharacters(board, validationStatus.duplicateCharacter, row, true);
-            return false;
-          } else if (validationStatus.wordAlreadyExists){
-              if(validationStatus.doesReverseExist){
-                this.failureDetail = this.reverseWord(word.toUpperCase()) + " exists";
-                this.failureReason = FAILURE_INFO.WORD_EXISTS;
-                this.foundWord = this.reverseWord(word.toUpperCase());
-                this.colorExistingWord(this.board, row, j, row, i);
-              } else{
-                this.failureDetail = word + " exists";
-                this.failureReason = FAILURE_INFO.WORD_EXISTS;
-                this.foundWord = word;
-                this.colorExistingWord(this.board, row, i, row, j);
-              }            
             return false;
           }
         }
       }
     }
-    
-    for(let col = 0; col< BOARD_SIZE; col++){
-      for(let i=0; i<=BOARD_SIZE-3; i++){
-        for(let j=i+3; j<=BOARD_SIZE; j++){
+// checking if the columns contain any duplicates
+    for (let col = 0; col < BOARD_SIZE; col++) {
+      for (let i = 0; i <= BOARD_SIZE - 3; i++) {
+        for (let j = i + 3; j <= BOARD_SIZE; j++) {
           let word: string = this.constructWordFromIndices(this.board, i, col, j, col);
           let validationStatus = this.validateWord(word)
-          if(validationStatus.hasDuplicates){
+          if (validationStatus.hasDuplicates) {
             this.failureDetail = validationStatus.duplicateCharacter + " is repeated";
             this.failureReason = FAILURE_INFO.DUPLICATE;
             this.colorDuplicateCharacters(board, validationStatus.duplicateCharacter, col, false);
             return false;
-          } else if (validationStatus.wordAlreadyExists){
-            if(validationStatus.doesReverseExist){
+          }
+        }
+      }
+    }
+// checking if the rows contain any valid word
+    for (let row = 0; row < BOARD_SIZE; row++) {
+      for (let i = 0; i <= BOARD_SIZE - 3; i++) {
+        for (let j = i + 3; j <= BOARD_SIZE; j++) {
+          let word: string = this.constructWordFromIndices(this.board, row, i, row, j);
+          let validationStatus = this.validateWord(word);
+          if (validationStatus.wordAlreadyExists) {
+            if (validationStatus.doesReverseExist) {
               this.failureDetail = this.reverseWord(word.toUpperCase()) + " exists";
               this.failureReason = FAILURE_INFO.WORD_EXISTS;
               this.foundWord = this.reverseWord(word.toUpperCase());
-              this.colorExistingWord(this.board, j, col, i, col);
-            } else{
+              this.colorExistingWord(this.board, row, j, row, i);
+            } else {
               this.failureDetail = word + " exists";
               this.failureReason = FAILURE_INFO.WORD_EXISTS;
               this.foundWord = word;
-              this.colorExistingWord(this.board, i, col, j, col);
-            }          
+              this.colorExistingWord(this.board, row, i, row, j);
+            }
             return false;
           }
         }
       }
-    }    
+    }
+// checking if the cols contain any valid word
+    for (let col = 0; col < BOARD_SIZE; col++) {
+      for (let i = 0; i <= BOARD_SIZE - 3; i++) {
+        for (let j = i + 3; j <= BOARD_SIZE; j++) {
+          let word: string = this.constructWordFromIndices(this.board, i, col, j, col);
+          let validationStatus = this.validateWord(word);
+          if (validationStatus.wordAlreadyExists) {
+            if (validationStatus.doesReverseExist) {
+              this.failureDetail = this.reverseWord(word.toUpperCase()) + " exists";
+              this.failureReason = FAILURE_INFO.WORD_EXISTS;
+              this.foundWord = this.reverseWord(word.toUpperCase());
+              this.colorExistingWord(this.board, j, col, i, col);
+            } else {
+              this.failureDetail = word + " exists";
+              this.failureReason = FAILURE_INFO.WORD_EXISTS;
+              this.foundWord = word;
+              this.colorExistingWord(this.board, i, col, j, col);
+            }
+            return false;
+          }
+        }
+      }
+    }
     this.failureReason = "";
     this.foundWord = "";
     return true;
   }
 
-  colorDuplicateCharacters(board: Cell[][], char: string, index: number, isRow: boolean){
-    if(isRow){
-      for(let i=0; i< BOARD_SIZE; i++){
-        if(board[index][i].letter === char && !board[index][i].isLocked){
+  colorDuplicateCharacters(board: Cell[][], char: string, index: number, isRow: boolean) {
+    if (isRow) {
+      for (let i = 0; i < BOARD_SIZE; i++) {
+        if (board[index][i].letter === char && !board[index][i].isLocked) {
           board[index][i].background = CELL_COLOR.DUPLICATE_CHAR_CELL;
-        }        
+        }
       }
-    } else{
-      for(let i=0; i< BOARD_SIZE; i++){
-        if(board[i][index].letter === char && !board[index][i].isLocked){
+    } else {
+      for (let i = 0; i < BOARD_SIZE; i++) {
+        if (board[i][index].letter === char && !board[index][i].isLocked) {
           board[i][index].background = CELL_COLOR.DUPLICATE_CHAR_CELL;
-        }        
+        }
       }
     }
   }
 
-  colorExistingWord(board: Cell[][],  startRow: number, startCol: number, endRow: number, endCol: number ){
-    if(startRow == endRow){
-      if(startCol < endCol){
-        for(let i = startCol; i < endCol; i++){
-          let colorKey = `leftToRight_${i-startCol}`;
+  colorExistingWord(board: Cell[][], startRow: number, startCol: number, endRow: number, endCol: number) {
+    if (startRow == endRow) {
+      if (startCol < endCol) {
+        for (let i = startCol; i < endCol; i++) {
+          let colorKey = `leftToRight_${i - startCol}`;
           board[startRow][i].background = GRADIENT[colorKey];
         }
-      } else{
-        for(let i = startCol-1; i >= endCol; i--){
+      } else {
+        for (let i = startCol - 1; i >= endCol; i--) {
           let colorKey = `rightToLeft_${startCol - i - 1}`;
           board[startRow][i].background = GRADIENT[colorKey];
         }
-      }      
-    } else if (startCol == endCol){
-      if(startRow < endRow){
-        for(let i = startRow; i < endRow; i++){
-          let colorKey = `topToBottom_${i-startRow}`;
+      }
+    } else if (startCol == endCol) {
+      if (startRow < endRow) {
+        for (let i = startRow; i < endRow; i++) {
+          let colorKey = `topToBottom_${i - startRow}`;
           board[i][startCol].background = GRADIENT[colorKey];
         }
-      } else{
-        for(let i = startRow-1; i >= endRow; i--){
+      } else {
+        for (let i = startRow - 1; i >= endRow; i--) {
           let colorKey = `bottomToTop_${startRow - i - 1}`;
           board[i][startCol].background = GRADIENT[colorKey];
         }
@@ -190,26 +218,25 @@ export class BoardComponent implements OnInit {
     }
   }
 
-  constructWordFromIndices(board: Cell[][], startRow: number, startCol: number, endRow: number, endCol: number): string{
+  constructWordFromIndices(board: Cell[][], startRow: number, startCol: number, endRow: number, endCol: number): string {
     let word: string = "";
-    if(startRow == endRow){
-      for(let i = startCol; i < endCol; i++){
+    if (startRow == endRow) {
+      for (let i = startCol; i < endCol; i++) {
         word += board[startRow][i].letter;
       }
-    } else if (startCol == endCol){
-      for(let i = startRow; i < endRow; i++){
+    } else if (startCol == endCol) {
+      for (let i = startRow; i < endRow; i++) {
         word += board[i][startCol].letter;
       }
     }
-    console.log("(", startRow, startCol, ")", "->", "(", endRow, endCol, ")", word);
     return word;
   }
 
 
-  checkIfTheBoardIsFullyFilled(board: Cell[][]): boolean{
-    for(let row of board){
-      for(let cell of row){
-        if(cell.letter === ""){
+  checkIfTheBoardIsFullyFilled(board: Cell[][]): boolean {
+    for (let row of board) {
+      for (let cell of row) {
+        if (cell.letter === "") {
           this.solveStatus = "";
           this.foundWord = "";
           return false;
@@ -219,23 +246,23 @@ export class BoardComponent implements OnInit {
     return true;
   }
 
-  wordAlreadyExists(word: string){
+  wordAlreadyExists(word: string) {
     word = word.toLowerCase();
-    for(let w of this.ALL_WORDS){
-      if(word === w) return true;
-    }return false;
+    for (let w of this.ALL_WORDS) {
+      if (word === w) return true;
+    } return false;
   }
 
-  validateWord(word: string): WordValidation{
+  validateWord(word: string): WordValidation {
     let duplicateCharacter = this.hasDuplicateCharacters(word);
-    if(duplicateCharacter != ""){
-      return {hasDuplicates: true, wordAlreadyExists: false, duplicateCharacter: duplicateCharacter, doesReverseExist: false };
-    } else if(this.wordAlreadyExists(word)){
-      return {hasDuplicates: false, wordAlreadyExists: true, duplicateCharacter: "", doesReverseExist: false};
-    } else if (this.wordAlreadyExists(this.reverseWord(word))){
-      return {hasDuplicates: false, wordAlreadyExists: true, duplicateCharacter: "", doesReverseExist: true};
+    if (duplicateCharacter != "") {
+      return { hasDuplicates: true, wordAlreadyExists: false, duplicateCharacter: duplicateCharacter, doesReverseExist: false };
+    } else if (this.wordAlreadyExists(word)) {
+      return { hasDuplicates: false, wordAlreadyExists: true, duplicateCharacter: "", doesReverseExist: false };
+    } else if (this.wordAlreadyExists(this.reverseWord(word))) {
+      return { hasDuplicates: false, wordAlreadyExists: true, duplicateCharacter: "", doesReverseExist: true };
     }
-    return {hasDuplicates: false, wordAlreadyExists: false, duplicateCharacter:"", doesReverseExist: false};
+    return { hasDuplicates: false, wordAlreadyExists: false, duplicateCharacter: "", doesReverseExist: false };
   }
 
   /**
@@ -244,23 +271,23 @@ export class BoardComponent implements OnInit {
    * @returns 
    */
   hasDuplicateCharacters(word: string): string {
-    const charSet = new Set();  
+    const charSet = new Set();
     for (const char of word) {
       if (charSet.has(char)) {
         return char;
       }
-      charSet.add(char);    
-    }  
+      charSet.add(char);
+    }
     return "";
   }
 
-  fillTheBoardWithAWord(word: string){
+  fillTheBoardWithAWord(word: string) {
     let lastCol = -1;
     let index = 0;
-    for(let i = 0; i< BOARD_SIZE; i++){
-      let randomCol = this.generateARandomNumber(0, BOARD_SIZE-1);
-      while(randomCol == lastCol){
-        randomCol = this.generateARandomNumber(0, BOARD_SIZE-1);
+    for (let i = 0; i < BOARD_SIZE; i++) {
+      let randomCol = this.generateARandomNumber(0, BOARD_SIZE - 1);
+      while (randomCol == lastCol) {
+        randomCol = this.generateARandomNumber(0, BOARD_SIZE - 1);
       }
       this.board[i][randomCol].letter = word[index];
       this.board[i][randomCol].isLocked = true;
@@ -275,7 +302,7 @@ export class BoardComponent implements OnInit {
    * @param min 
    * @param max 
    */
-  generateARandomNumber(min: number, max: number){
+  generateARandomNumber(min: number, max: number) {
     return Math.round(Math.random() * (max - min))
   }
 
@@ -283,44 +310,44 @@ export class BoardComponent implements OnInit {
     return word.split('').reverse().join('');
   }
 
-  setDefaultColors(){
-    for(let i=0; i< BOARD_SIZE; i++){
-      for(let j=0; j< BOARD_SIZE; j++){
-        if(!this.board[i][j].isLocked){
-          if(this.board[i][j].isActive){
+  setDefaultColors() {
+    for (let i = 0; i < BOARD_SIZE; i++) {
+      for (let j = 0; j < BOARD_SIZE; j++) {
+        if (!this.board[i][j].isLocked) {
+          if (this.board[i][j].isActive) {
             this.board[i][j].background = CELL_COLOR.ACTIVE_CELL;
-          } else{
+          } else {
             this.board[i][j].background = CELL_COLOR.INACTIVE_CELL;
           }
-        } else{
+        } else {
           this.board[i][j].background = CELL_COLOR.BLOCKED_CELL;
-        }       
+        }
       }
     }
   }
 
-  onClickRestart(){
+  onClickRestart() {
     this.initializeTheBoard();
   }
 
-  getWordMeaning(word: string){
+  getWordMeaning(word: string) {
     this.dictionaryService.getWordMeanings(word).subscribe(res => {
       this.wordMeaning = res;
-    }, 
-    error => {
-      console.error("Error: ", error.message);
-    })
+    },
+      error => {
+        console.error("Error: ", error.message);
+      })
   }
 
-  onClickSeeMeaning(){
+  onClickSeeMeaning() {
     this.getWordMeaning(this.foundWord);
   }
 
-  onCloseModal(){
+  onCloseModal() {
     this.wordMeaning = null;
   }
 
-  shuffleString(inputString: string) : string {
+  shuffleString(inputString: string): string {
     const stringArray = inputString.split(''); // Convert the string to an array of characters
     for (let i = stringArray.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1)); // Generate a random index

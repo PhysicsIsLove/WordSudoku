@@ -10,8 +10,9 @@ export class CellComponent implements OnInit {
 
   isActive = false;
   yoyo: string = `linear-gradient(90deg, rgba(255,137,90,1) 0%, rgba(255,148,106,1) 100%)`
-  @Input("cellInfo") cellInfo :Cell = {letter: "", isActive: false, isLocked: false, background:""};
+  @Input("cellInfo") cellInfo :Cell = {row: -1, col: -1, letter: "", isActive: false, isLocked: false, background:""};
   @Output() cellValueChange = new EventEmitter<string>();
+  @Output() cellClick = new EventEmitter<{row: number, col: number}>();
 
   constructor() { 
   }
@@ -21,6 +22,7 @@ export class CellComponent implements OnInit {
 
   onKeyPress(event: any){
     if(!this.cellInfo.isActive){
+      event.preventDefault();
       return;
     }
     let keyCode: string = event.code;
@@ -34,5 +36,9 @@ export class CellComponent implements OnInit {
         }        
       }
     }        
+  }
+
+  onClickInput(){
+    this.cellClick.emit({row: this.cellInfo.row, col: this.cellInfo.col});
   }
 }

@@ -1,4 +1,6 @@
 export interface Cell {
+    row: number,
+    col: number,
     letter: string;
     isActive: boolean;
     isLocked: boolean;

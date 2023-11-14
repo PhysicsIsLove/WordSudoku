@@ -14,8 +14,7 @@ export class DictionaryService {
 
   getWordMeanings(word: string){
     return this.http.get<WordMeaning>(this.DICTIONARY_URL + word).pipe(
-      map((response: any) => {  
-        console.log("response: ", response);      
+      map((response: any) => {      
         return {
           word: response[0].word,
           meanings: response[0].meanings.map((item: any) => {

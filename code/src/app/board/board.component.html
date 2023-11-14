@@ -1,8 +1,13 @@
+<div class="game-rules-container">
+    <p>
+        Fill all the cells of the board such that no two letters in a row or column repeat. Also, no combination of letters should form a valid word, left-to-right, top-to-bottom and vice-versa.
+    </p>
+</div>
 <div class="board" [ngStyle]="{'grid-template-columns':gridSize}">
     <ng-container *ngFor="let row of board; index as i">
         <ng-container *ngFor="let cell of row; index as j">
             <div class="cell">
-                <app-cell (click)="onCellClick( i, j)" [cellInfo]="board[i][j]" (cellValueChange)="onCellValueChange($event, i, j)">
+                <app-cell (cellClick)="onCellClick( i, j)" [cellInfo]="board[i][j]" (cellValueChange)="onCellValueChange($event, i, j)">
                 </app-cell>
             </div>
         </ng-container>
