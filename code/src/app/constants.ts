@@ -1,4 +1,5 @@
 export const BOARD_SIZE = 5;
+export const NUM_OF_PREFILLED_CELLS = 10;
 
 export const WORDS_FILE_PATH = 'assets/popular_words.txt';
 
@@ -28,7 +29,7 @@ export const GRADIENT: any = {
     bottomToTop_4: `linear-gradient(0deg, rgba(255,206,189,1) 0%, rgba(255,225,217,1) 100%)`,
 }
 
-export const INITIALIZING_WORD = "AETIONSU";
+export const INITIALIZING_WORD = "AETIONSUEI";
 
 export const CELL_COLOR: any = {
     BLOCKED_CELL: "#618264",

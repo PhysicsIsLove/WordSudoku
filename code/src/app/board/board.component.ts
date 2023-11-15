@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { BOARD_SIZE, CELL_COLOR, FAILURE_INFO, GRADIENT, INITIALIZING_WORD, WORDS_FILE_PATH } from '../constants';
+import { BOARD_SIZE, CELL_COLOR, FAILURE_INFO, GRADIENT, INITIALIZING_WORD, NUM_OF_PREFILLED_CELLS, WORDS_FILE_PATH } from '../constants';
 import { Cell, WordMeaning, WordValidation } from '../model';
 import { FileServiceService } from '../services/file-service.service';
 import { DictionaryService } from '../services/dictionary.service';
+import { getAListOfRandomIndices } from '../utils/utility-methods';
 
 @Component({
   selector: 'app-board',
@@ -26,6 +27,7 @@ export class BoardComponent implements OnInit {
   ALL_WORDS: any;
 
   wordMeaning!: WordMeaning | null;
+  disableUserAction: boolean = false;
 
   constructor(private fileService: FileServiceService, private dictionaryService: DictionaryService) {
     this.initializeTheBoard();
@@ -78,6 +80,9 @@ export class BoardComponent implements OnInit {
     this.fillTheBoardWithAWord(this.shuffleString(INITIALIZING_WORD));
   }
 
+
+
+
   onCellValueChange(input: string, row: number, col: number) {
     this.solveStatus = "";
     this.failureReason = "";
@@ -86,10 +91,15 @@ export class BoardComponent implements OnInit {
     if (this.checkIfTheBoardIsFullyFilled(this.board)) {
       if (this.checkIfTheBoardIsSolved(this.board)) {
         this.solveStatus = "SUCCESS";
+        this.onBoardSuccessfullCompletion();
       } else {
         this.solveStatus = "TRY AGAIN";
       }
     }
+  }
+
+  onBoardSuccessfullCompletion(){
+    this.disableUserAction = true;
   }
 
   checkIfTheBoardIsSolved(board: Cell[][]): boolean {
@@ -282,18 +292,18 @@ export class BoardComponent implements OnInit {
   }
 
   fillTheBoardWithAWord(word: string) {
-    let lastCol = -1;
-    let index = 0;
-    for (let i = 0; i < BOARD_SIZE; i++) {
-      let randomCol = this.generateARandomNumber(0, BOARD_SIZE - 1);
-      while (randomCol == lastCol) {
-        randomCol = this.generateARandomNumber(0, BOARD_SIZE - 1);
+    let randomIndices = getAListOfRandomIndices(BOARD_SIZE, NUM_OF_PREFILLED_CELLS);
+    for (let i = 0; i < NUM_OF_PREFILLED_CELLS; i++) {
+      let row = Math.floor(randomIndices[i] / BOARD_SIZE);
+      let col = randomIndices[i] % BOARD_SIZE;
+      let randomLetterIndex = this.generateARandomNumber(0, word.length - 1);
+      while(this.hasDuplicateInRowOrColumn(row, col, word[randomLetterIndex])){
+        randomLetterIndex = this.generateARandomNumber(0, word.length - 1);      
       }
-      this.board[i][randomCol].letter = word[index];
-      this.board[i][randomCol].isLocked = true;
-      this.board[i][randomCol].background = CELL_COLOR.BLOCKED_CELL;
-      index += 1;
-      lastCol = randomCol;
+      this.board[row][col].letter = word[randomLetterIndex];
+      console.log("The letter ", word[randomLetterIndex], " goes in ", row, col);
+      this.board[row][col].isLocked = true;
+      this.board[row][col].background = CELL_COLOR.BLOCKED_CELL;
     }
   }
 
@@ -328,14 +338,17 @@ export class BoardComponent implements OnInit {
 
   onClickRestart() {
     this.initializeTheBoard();
+    this.disableUserAction = false;
   }
 
   getWordMeaning(word: string) {
     this.dictionaryService.getWordMeanings(word).subscribe(res => {
       this.wordMeaning = res;
+      
     },
       error => {
         console.error("Error: ", error.message);
+        alert("Sorry, no meanings found")
       })
   }
 
@@ -354,6 +367,36 @@ export class BoardComponent implements OnInit {
       [stringArray[i], stringArray[j]] = [stringArray[j], stringArray[i]]; // Swap characters
     }
     return stringArray.join(''); // Convert the array back to a string
+  }
+
+  /**
+   * Returns true if there is a duplicate, false otherwise
+   * @param row 
+   * @param col 
+   * @param letter 
+   * @returns 
+   */
+  hasDuplicateInRowOrColumn(row: number, col: number, letter: string): boolean{
+    console.log("Checking for letter ", letter);
+    // check in row
+    let countInRow = 0;
+    let countInCol = 0;
+    for(let i=0; i< BOARD_SIZE; i++){
+      if(this.board[row][i].letter === letter){
+        countInRow += 1;
+      }
+    }
+    for(let i=0; i< BOARD_SIZE; i++){
+      if(this.board[i][col].letter === letter){
+        countInCol += 1;
+      }
+    }
+    console.log(JSON.stringify(this.board.map(r => r.map(c => c.letter))));
+    console.log("COunt in row ", countInRow, "Count in col ", countInCol);
+    if(countInRow >= 1 || countInCol >= 1){
+      return true;
+    }
+    return false;
   }
 
 
