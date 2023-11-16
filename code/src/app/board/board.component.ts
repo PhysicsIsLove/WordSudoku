@@ -4,6 +4,7 @@ import { Cell, WordMeaning, WordValidation } from '../model';
 import { FileServiceService } from '../services/file-service.service';
 import { DictionaryService } from '../services/dictionary.service';
 import { getAListOfRandomIndices } from '../utils/utility-methods';
+import { TimeoutInfo } from 'rxjs';
 
 @Component({
   selector: 'app-board',
@@ -28,6 +29,11 @@ export class BoardComponent implements OnInit {
 
   wordMeaning!: WordMeaning | null;
   disableUserAction: boolean = false;
+
+  timeTaken = "00:00";
+  timerStarted : boolean = false; // keeps a track of whether the timer has started or not
+  timerID!: any;
+  gameStartTime!: any;
 
   constructor(private fileService: FileServiceService, private dictionaryService: DictionaryService) {
     this.initializeTheBoard();
@@ -96,10 +102,16 @@ export class BoardComponent implements OnInit {
         this.solveStatus = "TRY AGAIN";
       }
     }
+    if(this.timerStarted == false){
+      this.timerStarted = true;
+      this.timerID = setInterval(() => this.updateTimer(), 100);
+      this.gameStartTime = Date.now();
+    }
   }
 
   onBoardSuccessfullCompletion(){
     this.disableUserAction = true;
+    clearInterval(this.timerID);
   }
 
   checkIfTheBoardIsSolved(board: Cell[][]): boolean {
@@ -339,6 +351,9 @@ export class BoardComponent implements OnInit {
   onClickRestart() {
     this.initializeTheBoard();
     this.disableUserAction = false;
+    clearInterval(this.timerID);
+    this.timerID = null;
+    this.timeTaken = "00:00";
   }
 
   getWordMeaning(word: string) {
@@ -397,6 +412,23 @@ export class BoardComponent implements OnInit {
       return true;
     }
     return false;
+  }
+
+  updateTimer(){
+    const millisElapsed = Date.now() - this.gameStartTime;
+    const secondsElapsed = millisElapsed / 1000;
+    const minutesElapsed = secondsElapsed / 60;
+
+    const millisTest = this.formatNumber(millisElapsed % 1000, 1);
+    const secondsText = this.formatNumber(Math.floor(secondsElapsed) % 60, 2);
+    const minutesText = this.formatNumber(Math.floor(minutesElapsed),2);
+
+    this.timeTaken = `${minutesText}:${secondsText}`;
+  }
+
+  formatNumber(number: number, desiredLength: number){
+    const stringNumber = String(number);
+    return stringNumber.padStart(desiredLength, '0');
   }
 
 

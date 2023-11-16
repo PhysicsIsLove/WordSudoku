@@ -3,6 +3,9 @@
         Fill all the cells of the board such that no two letters in a row or column repeat. Also, no combination of letters should form a valid word, left-to-right, top-to-bottom and vice-versa.
     </p>
 </div>
+<div class="time-taken-text">
+    <p>{{timeTaken}}</p>
+</div>
 <div [ngClass]="'board'" [class.disable-user-action]="disableUserAction" [ngStyle]="{'grid-template-columns':gridSize}">
     <ng-container *ngFor="let row of board; index as i">
         <ng-container *ngFor="let cell of row; index as j">
