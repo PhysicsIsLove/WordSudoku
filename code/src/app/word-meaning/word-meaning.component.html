@@ -4,14 +4,20 @@
         <div class="modal-content">
             <h2>{{ wordMeaning.word }} </h2>
 
-            <div class="part-of-speech" *ngFor="let meaning of wordMeaning.meanings">
-                <p> [{{ meaning.partOfSpeech }}] </p>
-                <div  *ngFor="let definition of meaning.definitions">
-                    <p><strong>Def: </strong>{{ definition.definition }}</p>
-                    <p *ngIf="definition?.example"><strong>Example: </strong>{{ definition.example }}</p>
+            <div class="meanings-container">
+                <div class="part-of-speech" *ngFor="let meaning of wordMeaning.meanings">
+                    <p> [{{ meaning.partOfSpeech }}] </p>
+                    <div *ngFor="let definition of meaning.definitions">
+                        <p><strong>Def: </strong>{{ definition.definition }}</p>
+                        <p *ngIf="definition?.example"><strong>Example: </strong>{{ definition.example }}</p>
+                    </div>
                 </div>
-            </div>            
+            </div>
+            <div class="button-container">
+                <button (click)="onClickCloseModal()">Close</button>
+            </div>
         </div>
         <span class="close" id="closeModalBtn" (click)="onClickCloseModal()">&times;</span>
     </div>
+
 </ng-container>

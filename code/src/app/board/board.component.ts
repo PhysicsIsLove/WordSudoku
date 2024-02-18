@@ -3,7 +3,7 @@ import { BOARD_SIZE, CELL_COLOR, FAILURE_INFO, GRADIENT, INITIALIZING_WORD, NUM_
 import { Cell, WordMeaning, WordValidation } from '../model';
 import { FileServiceService } from '../services/file-service.service';
 import { DictionaryService } from '../services/dictionary.service';
-import { getAListOfRandomIndices } from '../utils/utility-methods';
+import { getAListOfRandomIndices, getAListOfRandomIndicesDistributedUniformly } from '../utils/utility-methods';
 import { TimeoutInfo } from 'rxjs';
 
 @Component({
@@ -304,7 +304,7 @@ export class BoardComponent implements OnInit {
   }
 
   fillTheBoardWithAWord(word: string) {
-    let randomIndices = getAListOfRandomIndices(BOARD_SIZE, NUM_OF_PREFILLED_CELLS);
+    let randomIndices = getAListOfRandomIndicesDistributedUniformly(BOARD_SIZE, NUM_OF_PREFILLED_CELLS);
     for (let i = 0; i < NUM_OF_PREFILLED_CELLS; i++) {
       let row = Math.floor(randomIndices[i] / BOARD_SIZE);
       let col = randomIndices[i] % BOARD_SIZE;

@@ -34,6 +34,8 @@ export class CellComponent implements OnInit {
         if(letter !== this.cellInfo.letter){
           this.cellValueChange.emit(letter);
         }        
+      } else{
+        event.preventDefault();
       }
     }        
   }

@@ -5,7 +5,8 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.5); /* Semi-transparent overlay */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Semi-transparent overlay */
     border-radius: 2px;
     box-shadow: 5px 5px 5px grey;
     overflow: auto;
@@ -13,6 +14,7 @@
 
 /* Styles for the modal content */
 .modal-content {
+    min-width: 25rem;
     height: 75%;
     overflow: auto;
     position: absolute;
@@ -22,19 +24,27 @@
     background-color: #fff;
     padding: 20px;
     border: 1px solid #000;
-    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 
-    .part-of-speech{
-        padding: 8px;
+    .meanings-container {
+        overflow-y: auto;
+        height: calc(100% - 100px);
         margin-bottom: 8px;
+        .part-of-speech {
+            padding: 8px;
+            margin-bottom: 8px;
+        }
+
+        .part-of-speech:nth-child(odd) {
+            background-color: rgb(230, 230, 230);
+        }
+
+        .part-of-speech:nth-child(even) {
+            background-color: rgb(238, 238, 238);
+        }
     }
 
-    .part-of-speech:nth-child(odd){
-        background-color: rgb(230, 230, 230);
-    }
-    .part-of-speech:nth-child(even){
-        background-color: rgb(238, 238, 238);
-    }
+
 }
 
 /* Styles for the close button */
@@ -45,4 +55,15 @@
     right: 0;
     padding: 10px;
     cursor: pointer;
+}
+
+.button-container {
+    display: flex;
+    justify-content: end;
+
+    button {
+        width: 4.5rem;
+        height: 1.5rem;
+        cursor: pointer;
+    }
 }

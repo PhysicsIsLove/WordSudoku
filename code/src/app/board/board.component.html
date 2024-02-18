@@ -1,37 +1,44 @@
-<div class="game-rules-container">
-    <p>
-        Fill all the cells of the board such that no two letters in a row or column repeat. Also, no combination of letters should form a valid word, left-to-right, top-to-bottom and vice-versa.
-    </p>
-</div>
-<div class="time-taken-text">
-    <p>{{timeTaken}}</p>
-</div>
-<div [ngClass]="'board'" [class.disable-user-action]="disableUserAction" [ngStyle]="{'grid-template-columns':gridSize}">
-    <ng-container *ngFor="let row of board; index as i">
-        <ng-container *ngFor="let cell of row; index as j">
-            <div class="cell">
-                <app-cell (cellClick)="onCellClick( i, j)" [cellInfo]="board[i][j]" (cellValueChange)="onCellValueChange($event, i, j)">
-                </app-cell>
-            </div>
+<div class="game-board">
+    <div class="game-rules-container">
+        <p>
+            Fill all the cells of the board such that no two letters in a row or column repeat. Also, no combination of
+            letters should form a valid word, left-to-right, top-to-bottom and vice-versa.
+        </p>
+    </div>
+    <!-- <div class="time-taken-text">
+        <p>{{timeTaken}}</p>
+    </div> -->
+    <div [ngClass]="'board'" [class.disable-user-action]="disableUserAction"
+        [ngStyle]="{'grid-template-columns':gridSize}">
+        <ng-container *ngFor="let row of board; index as i">
+            <ng-container *ngFor="let cell of row; index as j">
+                <div class="cell">
+                    <app-cell (cellClick)="onCellClick( i, j)" [cellInfo]="board[i][j]"
+                        (cellValueChange)="onCellValueChange($event, i, j)">
+                    </app-cell>
+                </div>
+            </ng-container>
         </ng-container>
-    </ng-container>
-</div>
+    </div>
 
-<div  class="failure-info">
-    <ng-container *ngIf="failureReason !== ''">
-    <p class="failure-detail">{{ failureDetail }}</p>
-    <button class="meaning-btn" *ngIf="failureReason === 'wordExists'" (click)="onClickSeeMeaning()">See meaning</button>
-    </ng-container>
-</div>
+    <div class="failure-info">
+        <ng-container *ngIf="failureReason !== ''">
+            <p class="failure-detail">{{ failureDetail }}</p>
+            <button class="meaning-btn" *ngIf="failureReason === 'wordExists'" (click)="onClickSeeMeaning()">See
+                meaning</button>
+        </ng-container>
+    </div>
 
-<div class="result-container">
-    <p class="result-status"> {{ solveStatus }} </p> 
-</div>
+    <div class="result-container">
+        <p class="result-status"> {{ solveStatus }} </p>
+    </div>
 
-<div>
-    <button class="restart-btn" (click)="onClickRestart()" >
-        Restart
-    </button>
-</div>
+    <div>
+        <button class="restart-btn" (click)="onClickRestart()">
+            Restart
+        </button>
+    </div>
 
-<app-word-meaning [wordMeaning]="wordMeaning" (closeModal)="onCloseModal()"> </app-word-meaning>
+    <app-word-meaning [wordMeaning]="wordMeaning" (closeModal)="onCloseModal()"> </app-word-meaning>
+
+</div>

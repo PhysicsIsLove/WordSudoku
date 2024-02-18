@@ -21,6 +21,28 @@ export function  getAListOfRandomIndices(boardSize: number, numOfElements: numbe
     return shuffledArr;
 }  
 
-function makeAnArrayOfGoodPositions(boardSized: number, positions: number[]): boolean {
-    return false;
+export function getAListOfRandomIndicesDistributedUniformly(boardSize: number, numOfElements: number) {
+    let totalCells = boardSize * boardSize;
+    let evenIndices = [];
+    let oddIndices = [];
+    for(let i=0; i< totalCells; i++){
+        if(i % 2 == 0) evenIndices.push(i);
+         else oddIndices.push(i);
+    }
+    for (let i = evenIndices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1)); 
+        [evenIndices[i], evenIndices[j]] = [evenIndices[j], evenIndices[i]]; 
+    }
+    for (let i = oddIndices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1)); 
+        [oddIndices[i], oddIndices[j]] = [oddIndices[j], oddIndices[i]]; 
+    }
+    let currentTime = new Date();
+    if(currentTime.getMilliseconds() % 2 == 0) {
+        return evenIndices.slice(0, numOfElements);
+    } else{
+        return oddIndices.slice(0, numOfElements);
+    }
 }
+
+
