@@ -131,8 +131,8 @@ export class BoardComponent implements OnInit {
   checkIfRecordBroke(lastBest: string, current: string): boolean{
     let oldTime = lastBest.split(":");
     const currentTime = current.split(":");
-    const oldTimeInMillis: number = Number(oldTime[0]) * 60 * 1000 + Number(oldTime[1]) * 1000 + Number(oldTime[2]);
-    const currentTimeInMillis: number = Number(currentTime[0]) * 60 * 1000 + Number(currentTime[1]) * 1000 + Number(currentTime[2]);
+    const oldTimeInMillis: number = Number(oldTime[0]) * 60 * 1000 + Number(oldTime[1].split(".")[0]) * 1000 + Number(oldTime[2].split(".")[1]);
+    const currentTimeInMillis: number = Number(currentTime[0]) * 60 * 1000 + Number(currentTime[1].split(".")[0]) * 1000 + Number(currentTime[2].split(".")[0]);
     if(currentTimeInMillis < oldTimeInMillis){
       return true;
     } else{
@@ -450,8 +450,11 @@ export class BoardComponent implements OnInit {
       const millisText = String(millisElapsed).slice(-3)[0];
       const secondsText = this.formatNumber(Math.floor(secondsElapsed) % 60, 2);
       const minutesText = this.formatNumber(Math.floor(minutesElapsed),2);
+      if(Number(minutesText) >= 60){
+        clearInterval(this.intervalId);
+      }
   
-      this.timeTaken = `${minutesText}:${secondsText}:${millisText}`;
+      this.timeTaken = `${minutesText}:${secondsText}.${millisText}`;
     }, 100 )
   }
 
