@@ -1,13 +1,16 @@
 :root {
-    --cell-size: 100px;
+    // --cell-size: 6rem;
     cursor: none;
 }
 
-.cell-active{
+$CELL-SIZE: 3.5rem;
+$FONT-SIZE: 2.5rem;
+
+.cell-active {
     border-radius: 5px;
     border: 2px solid green;
-    width: 100px;
-    height: 100px;
+    width: $CELL-SIZE;
+    height: $CELL-SIZE;
 
     display: flex;
     justify-content: center;
@@ -16,11 +19,11 @@
     box-sizing: border-box;
 }
 
-.cell-locked{
+.cell-locked {
     cursor: default;
     border-radius: 5px;
-    width: 100px;
-    height: 100px;
+    width: $CELL-SIZE;
+    height: $CELL-SIZE;
 
     display: flex;
     justify-content: center;
@@ -28,11 +31,11 @@
     color: white;
 }
 
-.cell-not-active{
+.cell-not-active {
     border-radius: 5px;
-    width: 100px;
-    height: 100px;
-    
+    width: $CELL-SIZE;
+    height: $CELL-SIZE;
+
     display: flex;
     justify-content: center;
     align-items: center;
@@ -40,25 +43,26 @@
 
 }
 
-.cell-text{
-    font-size: 90px;
+.cell-text {
+    font-size: $FONT-SIZE;
     font-family: monospace;
     margin: 0px;
     cursor: pointer;
 }
 
 input {
-    width: 100px;
-    height: 100px;
+    width: $CELL-SIZE;
+    height: $CELL-SIZE;
     border: 0px;
-    font-size: 90px;
+    font-size: $FONT-SIZE;
     font-family: monospace;
     color: black;
     cursor: pointer;
     text-align: center;
-    caret-color: transparent;    
+    caret-color: transparent;
     box-sizing: border-box;
 }
+
 input:focus {
     outline: none;
-  }
+}

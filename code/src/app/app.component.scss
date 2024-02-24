@@ -1,9 +1,8 @@
 .main-container{
     display: flex;
     justify-content: center;
-    align-items: center;
-    height: 90vh;
     margin: auto;
-    margin-top: 32px;
+    margin-top: 2rem;
     width: 100%;
+    height: calc(100vh - 10rem);
 }
