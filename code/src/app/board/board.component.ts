@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { BOARD_SIZE, CELL_COLOR, FAILURE_INFO, GRADIENT, INITIALIZING_WORD, NUM_OF_PREFILLED_CELLS, WORDS_FILE_PATH } from '../constants';
+import { BEST_SCORE_DEFAULT_STRING, BOARD_SIZE, CELL_COLOR, FAILURE_INFO, GRADIENT, INITIALIZING_WORD, NUM_OF_PREFILLED_CELLS, START_TIME_TEXT, WORDS_FILE_PATH } from '../constants';
 import { Cell, WordMeaning, WordValidation } from '../model';
 import { FileServiceService } from '../services/file-service.service';
 import { DictionaryService } from '../services/dictionary.service';
-import { getAListOfRandomIndices, getAListOfRandomIndicesDistributedUniformly } from '../utils/utility-methods';
-import { TimeoutInfo } from 'rxjs';
+import { getAListOfRandomIndicesDistributedUniformly } from '../utils/utility-methods';
 
 @Component({
   selector: 'app-board',
@@ -30,17 +29,22 @@ export class BoardComponent implements OnInit {
   wordMeaning!: WordMeaning | null;
   disableUserAction: boolean = false;
 
-  timeTaken = "00:00";
-  timerStarted : boolean = false; // keeps a track of whether the timer has started or not
-  timerID!: any;
-  gameStartTime!: any;
+  timeTaken = START_TIME_TEXT;
+  startTime = Date.now();
+  intervalId: any;
+  bestScore: string | null = BEST_SCORE_DEFAULT_STRING;
 
   constructor(private fileService: FileServiceService, private dictionaryService: DictionaryService) {
-    this.initializeTheBoard();
+    
   }
 
   ngOnInit(): void {
     this.loadWordsFile();
+    this.initializeTheBoard();
+    let currentBestScore = localStorage.getItem("bestScore");
+    if(currentBestScore != undefined){
+      this.bestScore = currentBestScore;
+    }
   }
 
   loadWordsFile() {
@@ -84,9 +88,10 @@ export class BoardComponent implements OnInit {
       }
     }
     this.fillTheBoardWithAWord(this.shuffleString(INITIALIZING_WORD));
+    setTimeout(() => {
+      this.updateTime();
+    }, 1000);
   }
-
-
 
 
   onCellValueChange(input: string, row: number, col: number) {
@@ -102,16 +107,37 @@ export class BoardComponent implements OnInit {
         this.solveStatus = "TRY AGAIN";
       }
     }
-    if(this.timerStarted == false){
-      this.timerStarted = true;
-      this.timerID = setInterval(() => this.updateTimer(), 100);
-      this.gameStartTime = Date.now();
-    }
   }
 
   onBoardSuccessfullCompletion(){
     this.disableUserAction = true;
-    clearInterval(this.timerID);
+    clearInterval(this.intervalId);
+    this.updateTheScoresData();
+  }
+
+  updateTheScoresData(){
+    let lastBest = localStorage.getItem("bestScore");
+    if(lastBest){
+      let recordBroken = this.checkIfRecordBroke(lastBest, this.timeTaken);
+      if(recordBroken == true){
+        localStorage.setItem("bestScore", this.timeTaken);
+      }
+    } else{
+      localStorage.setItem("bestScore", this.timeTaken);
+    }
+    this.bestScore = localStorage.getItem("bestScore");
+  }
+
+  checkIfRecordBroke(lastBest: string, current: string): boolean{
+    let oldTime = lastBest.split(":");
+    const currentTime = current.split(":");
+    const oldTimeInMillis: number = Number(oldTime[0]) * 60 * 1000 + Number(oldTime[1]) * 1000 + Number(oldTime[2]);
+    const currentTimeInMillis: number = Number(currentTime[0]) * 60 * 1000 + Number(currentTime[1]) * 1000 + Number(currentTime[2]);
+    if(currentTimeInMillis < oldTimeInMillis){
+      return true;
+    } else{
+      return false;
+    }
   }
 
   checkIfTheBoardIsSolved(board: Cell[][]): boolean {
@@ -313,7 +339,6 @@ export class BoardComponent implements OnInit {
         randomLetterIndex = this.generateARandomNumber(0, word.length - 1);      
       }
       this.board[row][col].letter = word[randomLetterIndex];
-      console.log("The letter ", word[randomLetterIndex], " goes in ", row, col);
       this.board[row][col].isLocked = true;
       this.board[row][col].background = CELL_COLOR.BLOCKED_CELL;
     }
@@ -349,11 +374,12 @@ export class BoardComponent implements OnInit {
   }
 
   onClickRestart() {
+    clearInterval(this.intervalId);
     this.initializeTheBoard();
     this.disableUserAction = false;
-    clearInterval(this.timerID);
-    this.timerID = null;
-    this.timeTaken = "00:00";
+    this.timeTaken = START_TIME_TEXT;
+    this.startTime = Date.now();
+    
   }
 
   getWordMeaning(word: string) {
@@ -362,7 +388,6 @@ export class BoardComponent implements OnInit {
       
     },
       error => {
-        console.error("Error: ", error.message);
         alert("Sorry, no meanings found")
       })
   }
@@ -392,7 +417,6 @@ export class BoardComponent implements OnInit {
    * @returns 
    */
   hasDuplicateInRowOrColumn(row: number, col: number, letter: string): boolean{
-    console.log("Checking for letter ", letter);
     // check in row
     let countInRow = 0;
     let countInCol = 0;
@@ -406,24 +430,10 @@ export class BoardComponent implements OnInit {
         countInCol += 1;
       }
     }
-    console.log(JSON.stringify(this.board.map(r => r.map(c => c.letter))));
-    console.log("COunt in row ", countInRow, "Count in col ", countInCol);
     if(countInRow >= 1 || countInCol >= 1){
       return true;
     }
     return false;
-  }
-
-  updateTimer(){
-    const millisElapsed = Date.now() - this.gameStartTime;
-    const secondsElapsed = millisElapsed / 1000;
-    const minutesElapsed = secondsElapsed / 60;
-
-    const millisTest = this.formatNumber(millisElapsed % 1000, 1);
-    const secondsText = this.formatNumber(Math.floor(secondsElapsed) % 60, 2);
-    const minutesText = this.formatNumber(Math.floor(minutesElapsed),2);
-
-    this.timeTaken = `${minutesText}:${secondsText}`;
   }
 
   formatNumber(number: number, desiredLength: number){
@@ -431,5 +441,18 @@ export class BoardComponent implements OnInit {
     return stringNumber.padStart(desiredLength, '0');
   }
 
+  updateTime(){
+    this.intervalId = setInterval (() =>   {    
+      const millisElapsed = Date.now() - this.startTime;
+      const secondsElapsed = millisElapsed / 1000;
+      const minutesElapsed = secondsElapsed / 60;
+  
+      const millisText = String(millisElapsed).slice(-3)[0];
+      const secondsText = this.formatNumber(Math.floor(secondsElapsed) % 60, 2);
+      const minutesText = this.formatNumber(Math.floor(minutesElapsed),2);
+  
+      this.timeTaken = `${minutesText}:${secondsText}:${millisText}`;
+    }, 100 )
+  }
 
 }
