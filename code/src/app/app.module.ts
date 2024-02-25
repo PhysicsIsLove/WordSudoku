@@ -7,6 +7,7 @@ import { BoardComponent } from './board/board.component';
 import { CellComponent } from './cell/cell.component';
 import { HttpClientModule } from '@angular/common/http';
 import { WordMeaningComponent } from './word-meaning/word-meaning.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { WordMeaningComponent } from './word-meaning/word-meaning.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

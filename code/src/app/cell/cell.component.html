@@ -1,9 +1,10 @@
 <div>
-    <input type="text" maxlength="1" [value]="cellInfo.letter"
+    <input type="text" [(ngModel)]="cellInfo.letter" #cellInput
     (click)="onClickInput()"
-    (keypress)="onKeyPress($event)" (keyup)="onKeyPress($event)"
+    (input)="onInputEvent($event)"
     [ngClass]="{ 'cell-active': cellInfo.isActive, 'cell-not-active': !cellInfo.isActive, 'cell-locked': cellInfo.isLocked}"
     [ngStyle]="{'background': cellInfo.background }"
     >
 </div>
+<!-- <p>{{cellInfo.letter}} | {{cellInfo.isActive}}</p> -->
 
